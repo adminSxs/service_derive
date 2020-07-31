@@ -14,7 +14,7 @@ use darling::FromDeriveInput;
 use darling::FromVariant;
 
 
-#[proc_macro_derive(DetailError,attributes(detail))]
+#[proc_macro_derive(ServiceError,attributes(error))]
 pub fn detail_error_fn(input: TokenStream)->TokenStream{
     let proc_macro2_token = proc_macro2::TokenStream::from(input);
     let derive_input=syn::parse2::<DeriveInput>(proc_macro2_token).unwrap();
