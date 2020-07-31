@@ -4,11 +4,11 @@ extern crate quote;
 extern crate syn;
 
 use syn::Ident;
-use syn::DeriveInput;
+use syn::{parse_macro_input, DeriveInput};
 
 use proc_macro::TokenStream;
-use darling::FromDeriveInput;
-use darling::FromVariant;
+
+use darling::{FromVariant,FromDeriveInput};
 
 
 #[proc_macro_derive(ServiceError,attributes(error))]
@@ -52,23 +52,23 @@ pub fn detail_error_fn(input: TokenStream)->TokenStream{
     TokenStream::from(output)
 }
 
-#[derive(Debug,FromDeriveInput)]
+#[derive(Debug,darling::FromDeriveInput)]
 #[darling(attributes(error),supports(enum_any))]
 struct DetailErrorEnum{
     ident: syn::Ident,
     data: darling::ast::Data<DetailErrorVariant,darling::util::Ignored>
 }
 
-#[derive(Debug,FromVariant)]
+#[derive(Debug,darling::FromVariant)]
 #[darling(attributes(error))]
 struct DetailErrorVariant{
     ident: syn::Ident,
     // fields 的数据， 指的是 `InvalidEmail(String)` 里面的 `String`
     fields: darling::ast::Fields<syn::Field>,
-    // 这里表示从 `FromMeta` 中取数据，这里特指 `#[detail(code=400)]`
+    // 这里表示从 `FromMeta` 中取数据，这里特指 `#[error(code=400)]`
     #[darling(default)]
     code: Option<i32>,
-    // 这里表示从 `FromMeta` 中取数据，这里特指 `#[detail(message="detail message")]`
+    // 这里表示从 `FromMeta` 中取数据，这里特指 `#[error(message="detail message")]`
     #[darling(default)]
     message: Option<String>,
 }
